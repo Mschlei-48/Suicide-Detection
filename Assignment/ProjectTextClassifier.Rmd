@@ -1,0 +1,684 @@
+---
+title: "Suicide Detection"
+author: "Mishi Makade"
+date: "19/09/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Load packages
+
+
+```{r warning=FALSE}
+library(tidytext)
+library(dplyr)
+library(wordcloud)
+library(cowplot)
+library(ggplot2)
+library(keras)
+library(ggplot2)
+library(tm)
+library(textclean)
+library(syuzhet)
+library(lubridate)
+library(reshape2)
+library(dplyr)
+library(OpenImageR)
+library(tesseract)
+library(magick)
+library(OpenImageR)
+library(keras)
+library(dplyr)
+library(ggplot2)
+library(purrr)
+library(tensorflow)
+library(tidyverse)
+library(gutenbergr)
+library(caTools)
+library(data.table)
+library(base)
+```
+
+### Load the data
+
+```{r}
+data=read.csv('C:/Users/Student/Desktop/Suicide_Detection.csv',nrows = 6000)
+head(data)
+
+```
+
+### Load Images
+
+```{r warning=FALSE}
+
+lang=tesseract("eng")
+
+sui_list=list.files(path="C:/Users/Student/Desktop/Fol/3rd Year 2ND Semester/DataScience2B/Project/New_SuicideQuotes", pattern=".jpg|.png|.jpeg",all.files=T, full.names=T) 
+
+sui_images=c()
+for(img in sui_list)
+{
+  im=image_read(img)
+  sui_images=append(sui_images,im)
+}
+
+
+images=c()
+list=list.files(path="C:/Users/Student/Desktop/Fol/3rd Year 2ND Semester/DataScience2B/Project/New_HappyQuotes", pattern=".jpg|.png|.jpeg",all.files=T, full.names=T)
+
+for(img in list)
+{
+  im=image_read(img)
+  images=append(images,im)
+}
+
+
+
+
+
+```
+
+
+### Improve the quality of the images
+
+The images were brightened, contrast enhanced and noise was removed. This was done to improve the quality of the images to help the OCR better recognise the text in the images.
+
+```{r warning=FALSE}
+sui_imp=c()
+for (i in 1:length(sui_images)) {
+  img=image_modulate(sui_images[i], brightness = 200)
+  img=image_contrast(img)
+  img=image_enhance(img)
+  sui_imp=append(img,sui_imp)
+}
+imp=c()
+for (i in 1:length(images)) {
+  img=image_modulate(images[i], brightness = 200)
+  img=image_contrast(img)
+  img=image_enhance(img)
+  imp=append(img,imp)}
+```
+
+
+
+### Example of original image and quality enhanced image
+
+```{r warning=FALSE}
+
+
+p1 <- ggdraw() + draw_image(imp[1], scale = 0.9)
+p2 <- ggdraw() + draw_image("C:/Users/Student/Desktop/Fol/3rd Year 2ND Semester/DataScience2B/Project/New_HappyQuotes/tumblr_pl16akSsHz1qjs53y_500.jpg", scale = 0.9)
+
+plot_grid(p1, p2)
+
+```
+
+
+
+###  Extract text from images
+
+```{r warning=FALSE}
+
+sui_txts=c()
+for (i in 1:length(sui_imp)) {
+  text=tesseract::ocr(sui_imp[i], engine = lang)
+  sui_txts=append(text,sui_txts)
+}
+txts=c()
+for (i in 1:length(imp)) {
+  text=tesseract::ocr(imp[i], engine = lang)
+  txts=append(text,txts)
+}
+
+
+```
+
+### Look at the extracted text
+
+```{r}
+sui_txts
+```
+
+
+```{r}
+txts
+```
+
+
+The texts shown below are dirty and need some cleaning. We can see some new line characters(\n), numbers and lots of punctuation. All these must be removed as they are useless for the exploration.
+
+### Combine the text from the images with the csv file data
+
+The texts from the images are combined with the texts from the csv file to make one data.
+
+```{r warning=FALSE}
+DF <- as.data.frame(sui_txts)
+DF2 <- as.data.frame(txts)
+
+
+DF["class"] <- "suicide"
+DF2["class"] <- "non-suicide"
+
+colnames(DF)=c("text","class")
+colnames(DF2)=c("text","class")
+
+data=subset(data,select = -c(X))
+
+
+dataframe=rbind(DF,data)
+
+dataframe=rbind(DF2,data)
+```
+
+
+
+
+#Explore the data
+
+
+
+### Look for missing data
+
+```{r warning=FALSE}
+colSums(is.na(dataframe))
+```
+
+The are no missing values.
+
+### Look at the structure
+
+```{r warning=FALSE}
+str(dataframe)
+```
+The data has 6049 rows and 2 columns. One column is a character column and it has the texts and the other is also a character column that has labels.
+
+
+### Look at the class column
+
+Count how many suicidal texts compared to non-suicidal texts we have.
+
+```{r warning=FALSE}
+
+dataframe %>% count(class)
+```
+
+The data is balanced and most texts are suicidal texts. 
+
+
+## Explore the suicidal texts
+
+We extract the suicidal texts for exploration
+
+```{r warning=FALSE}
+sui_text=dataframe %>%   group_by(text) %>%   filter(any(class == "suicide")) 
+head(sui_text)
+```
+
+
+
+### Make a corpus for the suicidal texts
+
+```{r}
+corpus=Corpus(VectorSource(sui_text$text))
+
+```
+
+
+
+### Inspect the corpus
+
+```{r warning=FALSE}
+inspect(corpus[1:5])
+```
+
+
+The corpus shows that the data has a lot of unicode characters, numbers, and punctuations. These have to be removed from the text as they are of no interest to us because no insights can be derived from them.
+
+
+
+### Clean Text
+
+### Change uppercase letters to lowercase
+
+```{r warning=FALSE}
+corpus=tm_map(corpus,tolower)
+inspect(corpus[1:5])
+```
+
+# Remove punctuations
+
+```{r warning=FALSE}
+corpus=tm_map(corpus,removePunctuation)
+inspect(corpus[1:5])
+```
+
+
+
+# Remove numbers
+
+```{r warning=FALSE}
+corpus=tm_map(corpus,removeNumbers)
+inspect(corpus[1:5])
+```
+
+# Remove stopwords
+
+```{r warning=FALSE}
+corpus=tm_map(corpus,removeWords,stopwords('english'))
+inspect(corpus[1:5])
+```
+
+
+#Remove Unicode Characters
+
+
+```{r warning=FALSE}
+removeSym=function(x) gsub('[^ -~]', '', x)
+
+corpus=tm_map(corpus,content_transformer(removeSym))
+
+inspect(corpus[1:5])
+
+
+
+```
+
+
+
+# Remove curse words
+
+```{r warning=FALSE}
+
+removeSym=function(x) gsub("fuck*", '', x)
+
+corpus=tm_map(corpus,content_transformer(removeSym))
+
+inspect(corpus[1:5])
+```
+
+
+
+# Remove whitespaces
+
+```{r warning=FALSE}
+cleantext=tm_map(corpus,stripWhitespace)
+inspect(cleantext[1:5])
+```
+
+### Remove the names that might appear in the twitter screenshots. The words include retweeted,tweet, android and tweet.
+
+
+```{r warning=FALSE}
+removeSym=function(x) gsub("retweeted", "  " , x)
+corpus=tm_map(corpus,content_transformer(removeSym))
+removeSym=function(x) gsub("twitter", "  " , x)
+corpus=tm_map(corpus,content_transformer(removeSym))
+removeSym=function(x) gsub("tweet", "  " , x)
+corpus=tm_map(corpus,content_transformer(removeSym))
+removeSym=function(x) gsub("android", "  " , x)
+corpus=tm_map(corpus,content_transformer(removeSym))
+removeSym=function(x) gsub("jan", "  " , x)
+corpus=tm_map(corpus,content_transformer(removeSym))
+removeSym=function(x) gsub("quotes", "  " , x)
+corpus=tm_map(corpus,content_transformer(removeSym))
+```
+
+
+
+
+
+
+### Make a Term document matrix
+ 
+It makes the text structured data with rows and columns so that it is easy to explore and analyse
+
+```{r warning=FALSE}
+tdm=TermDocumentMatrix(cleantext)
+```
+
+### Look at the tdm
+
+```{r}
+tdm
+```
+
+
+It shows that there are 24166 words/terms. It also has 6033 documents/ posts.
+
+### Change the term document matrix into a matrix
+
+```{r}
+mat=as.matrix(tdm)
+```
+
+### View some columns of the matrix
+
+```{r 6033}
+mat[1:10,1:10]
+```
+The above tdm snippet shows that ago appears in the first text once, while back appears twice, began appears once and believe also appears once etc.
+All the words do not appear in the second text.
+
+
+### Do a barplot of the words to see which words occur most often
+
+```{r}
+w=rowSums(mat)
+w=subset(w,w>=1000)
+
+barplot(w,
+        las=2,
+        col = rainbow(50))
+```
+
+The words know, life,like,feel, don't and just appear the most in the posts, while the words years,day, friends and others appear the least in the suicidal posts.
+
+
+
+### Check how often each word appears in all the posts.
+
+```{r}
+words=rowSums(mat)
+words[1:15]
+```
+
+The words day, back, get, and way appear the most in the suicidal posts while the words days, come, began and others appear the least.
+
+
+
+
+### Make a wordcloud
+
+```{r warning=FALSE}
+w=sort(rowSums(mat),decreasing = TRUE)
+set.seed(555)
+
+wordcloud(words = names(w),freq=w,max.words=800,random.order = FALSE,random.color = TRUE,colors = brewer.pal(8,'Dark2'))
+
+
+
+```
+
+The wordcloud shows that suicidal posts have the words just, don't,like, know,feel, life and want appearing the most. Wile the positive words like future,best, able appear the least.
+
+
+
+### sentiment analysis
+
+```{r warning=FALSE}
+sentiment_scores=get_nrc_sentiment(sui_text$text)
+head(sentiment_scores)
+```
+
+
+All the suicidal thoughts shown have very high negative sentiments scores,so we can say suicidal posts are negative.
+
+### Get the percentage of each sentiment for all posts
+
+Get the sentiment percentage scores to get a better view at them.
+
+```{r}
+percent <- sentiment_scores / rowSums(sentiment_scores) * 100
+head(percent)
+```
+
+Thus shows that suicide posts are have very high percentage of negativity. 
+
+
+### Plot the sentiments
+
+
+```{r}
+barplot(colSums(sentiment_scores),
+        las = 2,
+        col = rainbow(10),
+        ylab = 'Count',
+        main = 'Sentiment Scores Suicide Posts')
+```
+
+
+The plot also confirms that most suicidal posts are negative, but it also reveals something interesting.It shows that  most suicidal posts are also positive so we we cannot conclude and say that suicidal posts are negative or positive, since there seems to be a large number of negative posts as well as positive posts.
+
+
+## Explore non-suicidal posts
+
+```{r}
+non_text=dataframe %>%   group_by(text) %>%   filter(any(class == "non-suicide")) 
+head(non_text)
+```
+
+
+```{r}
+non_text[1,2]
+```
+### Create a corpus
+
+```{r}
+corpus=Corpus(VectorSource(non_text$text))
+
+```
+
+
+
+### Inspect corpus
+
+```{r}
+inspect(corpus[1:5])
+```
+
+
+
+
+### Clean the posts
+
+
+### Change uppercase letters to lowercase
+
+```{r warning=FALSE}
+
+corpus=tm_map(corpus,tolower)
+inspect(corpus[1:5])
+```
+
+### Remove punctuations
+
+```{r warning=FALSE}
+corpus=tm_map(corpus,removePunctuation)
+inspect(corpus[1:5])
+```
+
+
+### Remove numbers
+
+```{r warning=FALSE}
+corpus=tm_map(corpus,removeNumbers)
+inspect(corpus[1:5])
+```
+
+
+### Remove stopwords
+
+```{r warning=FALSE}
+corpus=tm_map(corpus,removeWords,stopwords('english'))
+inspect(corpus[1:5])
+```
+
+
+### Remove Unicode Characters
+
+
+```{r warning=FALSE}
+removeSym=function(x) gsub('[^ -~]', '', x)
+
+corpus=tm_map(corpus,content_transformer(removeSym))
+
+inspect(corpus[1:5])
+
+
+
+```
+
+
+### Remove curse words
+
+```{r warning=FALSE}
+
+removeSym=function(x) gsub("fuck*", '', x)
+
+corpus=tm_map(corpus,content_transformer(removeSym))
+
+inspect(corpus[1:5])
+```
+
+
+### Remove unnecessary words
+
+
+```{r warning=FALSE}
+removeSym=function(x) gsub("retweeted", "  " , x)
+corpus=tm_map(corpus,content_transformer(removeSym))
+removeSym=function(x) gsub("twitter", "  " , x)
+corpus=tm_map(corpus,content_transformer(removeSym))
+removeSym=function(x) gsub("tweet", "  " , x)
+corpus=tm_map(corpus,content_transformer(removeSym))
+removeSym=function(x) gsub("android", "  " , x)
+corpus=tm_map(corpus,content_transformer(removeSym))
+removeSym=function(x) gsub("jan", "  " , x)
+corpus=tm_map(corpus,content_transformer(removeSym))
+removeSym=function(x) gsub("quotes", "  " , x)
+corpus=tm_map(corpus,content_transformer(removeSym))
+```
+
+
+
+### Remove whitespaces
+
+```{r warning=FALSE}
+cleantext=tm_map(corpus,stripWhitespace)
+inspect(cleantext[1:5])
+```
+
+
+
+
+
+### Term document matrix
+
+```{r warning=FALSE}
+tdm=TermDocumentMatrix(cleantext)
+```
+
+
+
+### Look at the tdm
+
+```{r warning=FALSE}
+tdm
+```
+
+There are 3083 non-suicidal posts.
+
+### Change the term document matrix into a matrix
+
+```{r warning=FALSE}
+mat=as.matrix(tdm)
+```
+
+
+### View some columns of the matrix
+
+```{r warning=FALSE}
+mat[30:40,10:20]
+```
+All the words do not appear in the texts 10 to 20, except for the word life which appears in the 17th text.
+Note: The above shows that the data has not been cleaned thoroughly, this is because of the OCR. Some words were not accurately recognized by the OCR.
+
+
+
+### Do a barplot of the words to see which words occur most often
+
+```{r}
+w=rowSums(mat)
+w=subset(w,w>=300)
+
+barplot(w,
+        las=2,
+        col = rainbow(50))
+```
+
+The words like and just appear the most in non-sucidal posts.The words will,school,something and day appear the least.
+
+
+
+### 5 Make a wordcloud
+
+```{r warning=FALSE}
+w=sort(rowSums(mat),decreasing = TRUE)
+set.seed(555)
+
+wordcloud(words = names(w),freq=w,max.words=800,random.order = FALSE,random.color = TRUE,colors = brewer.pal(8,'Dark2'))
+
+
+
+```
+
+
+The words as the wordcloud shows that appear the most in on-suicidal posts are like, just,filler, people, know and want.
+
+### Perform sentiment analysis
+
+```{r}
+Text=iconv(non_text$text,to="utf-8")
+sentiment_scores=get_nrc_sentiment(Text)
+head(sentiment_scores)
+```
+
+The sentiments for non-suicidal show less disgust and surprise and joy, and show more of anger, anticipation, positivity and sadness.
+
+
+# Plot the sentiments
+
+```{r}
+barplot(colSums(sentiment_scores),
+        las = 2,
+        col = rainbow(10),
+        ylab = 'Count',
+        main = 'Sentiment Scores non-Suicide Posts')
+```
+
+The plot shows most non-suicidal posts are positive, and like with the suicidal posts they also show more negativity but suicidal posts have negativity as the highest sentiment. The only difference between the non-suicidal posts and suicidal posts is that non-suicidal posts show more trust compared to suicidal posts, and sadness was more in suicidal posts but with non-suicidal posts sadness is low and anticipation is high. Also, suicidal posts have more fear compared to non-suicidal posts.
+
+
+### **Conclusion**
+
+From all the exploration we can conclude that suicidal people are more negative, while non-suicidal people are more positive. Suicidal people show more fear while non-suicidal people show less fear. Suicidal people are not trusting while non-suicidal people are more trusting.
+
+
+
+################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
