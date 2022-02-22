@@ -18,7 +18,7 @@ The app has 3 tabs. The first one gives instrictions on how to use the app. The 
 
 The dataset used here was obtained from Kaggle. The images were donwloaded from Google.
 
-# **Pre-processed image vs original image**
+## **Pre-processed image vs original image**
 ![Screenshot (1555)](https://user-images.githubusercontent.com/83508295/155151541-c6318ad0-7b3e-407c-8bad-5b4eda68f295.png)
 ![Screenshot (1556)](https://user-images.githubusercontent.com/83508295/155151555-9578d71c-5cca-438e-939b-38176d0eb014.png)
 ![Screenshot (1557)](https://user-images.githubusercontent.com/83508295/155151569-c398af66-a982-430e-9f7d-d6e8115f4c0b.png)
