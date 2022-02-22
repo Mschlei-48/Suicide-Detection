@@ -1,8 +1,14 @@
 # Suicide-Detection
-According to WHO,every year 703 000 people take their own life and there are many more people who attempt suicide. Every suicide is a tragedy that affects families, communities and entire countries and has long-lasting effects on the people left behind. Suicide occurs throughout the lifespan and was the fourth leading cause of death among 15-29 year-olds globally in 2019.The AIM of this project is to create a web app that can tell whether a person is suicidal or not through a text, many people get suicidal young or old, rich or poor etc… and it is very difficult to tell whether if a person is suicidal. A person can use the app if they suspect a person is suicidal. The app will also give details of where a person can get help  if  the text they gave is classified as suicidal.  
 
 Health Minister Zweli Mkhize revealed  Close to 1 800 people in South Africay have committed suicide in the four months following the declaration of the lockdown in March 2020.
 Minister Mkhize says 1 781 suicide-related deaths occurred under lockdown between the 27 March and 27 July 2020.
 In May, some mental health experts told SABC News that many South Africans are increasingly experiencing depression due to financial burdens and stress brought about by the coronavirus pandemic and resultant lockdown. They say the COVID-19 virus has sparked anxiety, panic and an increase in substance abuse.
 The Northern Cape had 44 people who died from suicide.Therefore the app focuses on Northern Cape suicide prevention. It gives the helplines for suicide preventionn around Kimberly and Northern Cape in general.
+
+# Project Overview
+
+1. **Data Exploration**
+The data was first explored and the results of the exploration are written in the 
+
+This app classifies text as suicidal and non-suicidal using the Random Forest machine learning model. It also gives the percentage probability for the classified text so that a person can determine how sure the model is about the classification it gave and decode whether to take actions.
 
