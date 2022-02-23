@@ -25,11 +25,12 @@ The dataset used here was obtained from Kaggle. The images were donwloaded from 
 
 # Web App Demo
 
-The app has 3 tabs. The first one gives instrictions on how to use the app. The second one is where a user can enter the text and click the submit button to get results. The third tab gives helplines for help in Northern Cape.
+The app has 3 tabs. The first one gives instrictions on how to use the app. The second one is where a user can upload a text file or an image and click the submit button to get results. The third tab gives helplines for help in Northern Cape.
 
 
-![Screenshot (1558)](https://user-images.githubusercontent.com/83508295/155389622-6eedb186-761d-41e5-83c0-a1643786935a.png)
-![Screenshot (1560)](https://user-images.githubusercontent.com/83508295/155389637-51b68a3e-5cb0-424e-b6b3-7757e37a5b4e.png)
-![Screenshot (1559)](https://user-images.githubusercontent.com/83508295/155389644-eaa6b0fc-604e-4e2e-9e21-267cfc24d34c.png)
 
+![Tab1](https://user-images.githubusercontent.com/83508295/155390368-774f7983-3dbd-4bcb-beb8-00c7e6417f2d.png)
 
+![Tab2](https://user-images.githubusercontent.com/83508295/155390391-e91369f7-5d69-4f49-bbf0-1b9b8ad98079.png)
+
+![Tab3](https://user-images.githubusercontent.com/83508295/155390411-9a8cf5a4-80b9-4465-9bdb-cfb20a76fafa.png)
