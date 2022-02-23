@@ -16,7 +16,7 @@ This app classifies text as suicidal and non-suicidal using the Random Forest ma
 
 # Dataset Demo
 
-The dataset used here was obtained from Kaggle. The images were donwloaded from Google.
+The dataset used here was obtained from [Kaggle](https://www.kaggle.com/nikhileswarkomati/suicide-watch). The images were donwloaded from Google.
 
 ## **Pre-processed image vs original image**
 ![Screenshot (1555)](https://user-images.githubusercontent.com/83508295/155151541-c6318ad0-7b3e-407c-8bad-5b4eda68f295.png)
