@@ -14,7 +14,7 @@ The data was first explored and the results of the exploration are written in th
 This app classifies text as suicidal and non-suicidal using the Random Forest machine learning model. It also gives the percentage probability for the classified text so that a person can determine how sure the model is about the classification it gave and decode whether to take actions.The RealSources file is used for the cleaning and pre-processing  of the data given by the user for the app.
 The app has 3 tabs. The first one gives instrictions on how to use the app. The second one is where a user can enter the text and click the submit button to get results. The third tab gives helplines for help in Northern Cape. 
 
-# Dataset Overview
+# Dataset Demo
 
 The dataset used here was obtained from Kaggle. The images were donwloaded from Google.
 
@@ -22,5 +22,7 @@ The dataset used here was obtained from Kaggle. The images were donwloaded from 
 ![Screenshot (1555)](https://user-images.githubusercontent.com/83508295/155151541-c6318ad0-7b3e-407c-8bad-5b4eda68f295.png)
 ![Screenshot (1556)](https://user-images.githubusercontent.com/83508295/155151555-9578d71c-5cca-438e-939b-38176d0eb014.png)
 ![Screenshot (1557)](https://user-images.githubusercontent.com/83508295/155151569-c398af66-a982-430e-9f7d-d6e8115f4c0b.png)
+
+# Web App Demo
 
 
