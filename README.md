@@ -11,8 +11,8 @@ The Northern Cape had 44 people who died from suicide.Therefore the app focuses 
 The data was first explored and the results of the exploration are written in the ProjectTextClassifier file. This project uses texts from a csv file and from images.
 
 2. **App and model**
-This app classifies text as suicidal and non-suicidal using the Random Forest machine learning model. It also gives the percentage probability for the classified text so that a person can determine how sure the model is about the classification it gave and decode whether to take actions.The RealSources file is used for the cleaning and pre-processing  of the data given by the user for the app.
-The app has 3 tabs. The first one gives instrictions on how to use the app. The second one is where a user can enter the text and click the submit button to get results. The third tab gives helplines for help in Northern Cape. 
+This app classifies text as suicidal and non-suicidal using the Random Forest machine learning model. It also gives the percentage probability for the classified text so that a person can determine how sure the model is about the classification it gave and decide whether to take actions.The RealSources file is used for the cleaning and pre-processing  of the data given by the user for the app.
+ 
 
 # Dataset Demo
 
@@ -24,5 +24,12 @@ The dataset used here was obtained from Kaggle. The images were donwloaded from 
 ![Screenshot (1557)](https://user-images.githubusercontent.com/83508295/155151569-c398af66-a982-430e-9f7d-d6e8115f4c0b.png)
 
 # Web App Demo
+
+The app has 3 tabs. The first one gives instrictions on how to use the app. The second one is where a user can enter the text and click the submit button to get results. The third tab gives helplines for help in Northern Cape.
+
+
+![Screenshot (1558)](https://user-images.githubusercontent.com/83508295/155389622-6eedb186-761d-41e5-83c0-a1643786935a.png)
+![Screenshot (1560)](https://user-images.githubusercontent.com/83508295/155389637-51b68a3e-5cb0-424e-b6b3-7757e37a5b4e.png)
+![Screenshot (1559)](https://user-images.githubusercontent.com/83508295/155389644-eaa6b0fc-604e-4e2e-9e21-267cfc24d34c.png)
 
 
