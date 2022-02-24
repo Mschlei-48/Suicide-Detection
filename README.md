@@ -8,7 +8,7 @@ The Northern Cape had 44 people who died from suicide.Therefore the app focuses 
 # Project Overview
 
 1. **Data Exploration**
-The data was first explored and the results of the exploration are written in the ProjectTextClassifier file. This project uses texts from a csv file and from images.
+The data was first explored and the results of the exploration are written in the ProjectTextClassifier file. This project uses texts from a csv file and from images, therefore I used both structured data and unstructured data. 
 
 2. **App and model**
 This app classifies text as suicidal and non-suicidal using the Random Forest machine learning model. It also gives the percentage probability for the classified text so that a person can determine how sure the model is about the classification it gave and decide whether to take actions.The RealSources file is used for the cleaning and pre-processing  of the data given by the user for the app.
